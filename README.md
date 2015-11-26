@@ -13,3 +13,6 @@ CPTR-460: Parallel and Distributed Systems
 
 ###Professor:
 Prof. Susan Alexander
+
+###References:
+http://scratchapixel.com
