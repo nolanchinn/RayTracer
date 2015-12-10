@@ -3,6 +3,84 @@
 #include <iostream>
 #include <iomanip>
 
+#ifndef M_PI
+#define M_PI           3.14159265358979323846
+#endif
+
+template<typename T>
+class Vec2
+{
+public:
+    //coordinates
+    T x, y;
+
+    //empty constructor
+    Vec2()
+    {
+        x = 0;
+        y = 0;
+    }
+
+    //1 value constructor
+    Vec2(T xx)
+    {
+        x = xx;
+        y = xx;
+    }
+
+    //2 value constructor
+    Vec2(T xx, T yy)
+    {
+        x = xx;
+        y = yy;
+    }
+
+    Vec2 operator+(const Vec2 &v) const
+    {
+        return Vec2(x + v.x, y + v.y);
+    }
+
+    Vec2 operator/(const T &r) const
+    {
+        return Vec2(x/r, y/r);
+    }
+
+    Vec2 operator*(const T &r) const
+    {
+        return Vec2(x*r, y*r);
+    }
+
+    Vec2& operator/=(const T &r)
+    {
+        x /= r;
+        y /= r;
+
+        return *this;
+    }
+
+    Vec2& operator*=(const T &r)
+    {
+        x *= r;
+        y *= r;
+
+        return *this;
+    }
+
+    friend std::ostream& operator<<(std::ostream &s, const Vec2<T> &v)
+    {
+        return s << '<' << v.x << ', ' << v.y << '>';
+    }
+
+    friend Vec2 operator *(const T &r, const Vec2<T> &v)
+    {
+        return Vec2(v.x*r, v.y*r);
+    }
+};
+
+//shorthand
+typedef Vec2<float> Vec2f;
+typedef Vec2<int> Vec2i;
+
 //3-Dimensional vector class
 template<typename T>
 class Vec3
@@ -58,7 +136,7 @@ public:
     }
 
     //Dot product of the vector
-    T dot(Vec3<T> v)
+    T dot(const Vec3<T> v) const
     {
         return x*v.x + y*v.y + z*v.z;
     }
@@ -87,6 +165,12 @@ public:
                        z - v.z);
     }
 
+    //Vector negation
+    Vec3 operator-() const
+    {
+        return Vec3(-x,-y,-z);
+    }
+
     //Scalar multiplication
     Vec3<T> operator*( const T &r ) const
     {
@@ -95,6 +179,10 @@ public:
                        z*r);
     }
 
+    Vec3 operator*(const Vec3 &v) const
+    {
+        return Vec3(x*v.x, y*v.y, z*v.z);
+    }
     //Access the vector coordinates as an array constant
     const T& operator[]( uint8_t i ) const
     {
