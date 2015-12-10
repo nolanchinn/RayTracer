@@ -11,6 +11,8 @@
 #include <random>
 #include "geometry.h"
 
+#define M_PI 3.14159265
+
 using namespace std;
 
 //infinity is the largest floating point number
@@ -100,13 +102,13 @@ public:
     {
         float t0, t1;
         Vec3f L = center - orig;
-        float tca = L.dot(dir);
+        float tca = L.dotProduct(dir);
         if(tca < 0)
         {
             return false;
         }
 
-        float d2 = L.dot(L) - tca*tca;
+        float d2 = L.dotProduct(L) - tca*tca;
         if( d2 > radius2)
         {
             return false;
@@ -181,7 +183,7 @@ Vec3f castRay(const Vec3f &orig, const Vec3f &dir, const vector<unique_ptr<Objec
         hitObject->getSurfaceData(Phit, Nhit, tex);
         float scale = 4;
         float pattern = (fmodf(tex.x * scale, 1) > 0.5) ^ (fmodf(tex.y*scale, 1) > 0.5);
-        hitColor = std::max(0.f, Nhit.dot(-dir)) * mix(hitObject->color, 0.8*hitObject->color, pattern);
+        hitColor = std::max(0.f, Nhit.dotProduct(-dir)) * mix(hitObject->color, 0.8*hitObject->color, pattern);
     }
 
     return hitColor;
