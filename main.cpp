@@ -199,33 +199,36 @@ void render(const Options &options, const vector<unique_ptr<Object>> &objects)
     options.cameraToWorld.multVecMatrix(Vec3f(0), orig);
 
     //the double-nested for loop where each pixel is calculated, this is where parallelization will occur
-    for(uint32_t j = 0; j < options.height; ++j)
+    #pragma omp parallel
     {
-        for(uint32_t i = 0; i <options.width; ++i)
+        for(uint32_t j = 0; j < options.height; ++j)
         {
-            float x = (2*(i + 0.5)/(float)options.width - 1)*imageAspectRatio*scale;
-            float y = (1 - 2*(j + 0.5)/(float)options.height)*scale;
+            #pragma omp for ordered schedule(dynamic)
+            for(uint32_t i = 0; i <options.width; ++i)
+            {
+                float x = (2*(i + 0.5)/(float)options.width - 1)*imageAspectRatio*scale;
+                float y = (1 - 2*(j + 0.5)/(float)options.height)*scale;
 
-            Vec3f dir;
-            options.cameraToWorld.multDirMatrix(Vec3f(x, y, -1), dir);
-            dir.normalize();
-            *(pix++) = castRay(orig, dir, objects);
+                Vec3f dir;
+                options.cameraToWorld.multDirMatrix(Vec3f(x, y, -1), dir);
+                dir.normalize();
+
+                *(pix++) = castRay(orig, dir, objects);
+            }
         }
+
+        //save to a PPM file
+        ofstream ofs("./out.ppm", ios::out | ios::binary);
+        ofs << "P6\n" << options.width << " " << options.height << "\n255\n";
+        for (uint32_t i = 0; i < options.height*options.width; ++i)
+        {
+            char r = (char)(255 * clamp(0, 1, framebuffer[i].x));
+            char g = (char)(255 * clamp(0, 1, framebuffer[i].y));
+            char b = (char)(255 * clamp(0, 1, framebuffer[i].z));
+            ofs << r << g << b;
+        }
+        ofs.close();
     }
-
-    //save to a PPM file
-    ofstream ofs("./out.ppm", ios::out | ios::binary);
-    ofs << "P6\n" << options.width << " " << options.height << "\n255\n";
-    for (uint32_t i = 0; i < options.height*options.width; ++i)
-    {
-        char r = (char)(255 * clamp(0, 1, framebuffer[i].x));
-        char g = (char)(255 * clamp(0, 1, framebuffer[i].y));
-        char b = (char)(255 * clamp(0, 1, framebuffer[i].z));
-        ofs << r << g << b;
-    }
-
-    ofs.close();
-
     delete [] framebuffer;
 }
 int main(int argc, char **argv)
@@ -233,8 +236,9 @@ int main(int argc, char **argv)
     vector<unique_ptr<Object>> objects;
 
     //make random spheres
-    uint32_t numSpheres = 32;
+    uint32_t numSpheres = 128;
     gen.seed(0);
+    #pragma omp for
     for(uint32_t i = 0; i < numSpheres; ++i)
     {
         Vec3f randPos((0.5 - dis(gen))*10, (0.5 - dis(gen))*10, (0.5 + dis(gen)*10));
@@ -244,9 +248,9 @@ int main(int argc, char **argv)
 
     //set image options
     Options options;
-    options.width = 640;
-    options.height = 480;
-    options.fov = 51.52;
+    options.width = 1024;
+    options.height = 768;
+    options.fov = 60;
     options.cameraToWorld = Matrix44f(0.945519, 0, -0.325569, 0, -0.179534, 0.834209, -0.521403, 0, 0.271593, 0.551447, 0.78876, 0, 4.208271, 8.374532, 17.932925, 1);
 
     //render the image
