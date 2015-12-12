@@ -5,67 +5,162 @@
 #include <cmath>
 
 template<typename T>
-class Vec2
+class Vec2 // 2D vector
 {
 public:
-    Vec2() : x(0), y(0) {}
-    Vec2(T xx) : x(xx), y(xx) {}
-    Vec2(T xx, T yy) : x(xx), y(yy) {}
-    Vec2 operator + (const Vec2 &v) const
-    { return Vec2(x + v.x, y + v.y); }
-    Vec2 operator / (const T &r) const
-    { return Vec2(x / r, y / r); }
-    Vec2 operator * (const T &r) const
-    { return Vec2(x * r, y * r); }
-    Vec2& operator /= (const T &r)
-    { x /= r, y /= r; return *this; }
-    Vec2& operator *= (const T &r)
-    { x *= r, y *= r; return *this; }
-    friend std::ostream& operator << (std::ostream &s, const Vec2<T> &v)
+    Vec2() // empty constructor
+    {
+        x = 0;
+        y = 0;
+    }
+
+    Vec2(T xx) // one argument constructor
+    {
+        x = xx;
+        y = xx;
+    }
+
+    Vec2(T xx, T yy) // full constructor
+    {
+        x = xx;
+        y = yy;
+    }
+
+    Vec2 operator + (const Vec2 &v) const // vector addition
+    {
+        return Vec2(x + v.x, y + v.y);
+    }
+
+    Vec2 operator / (const T &r) const // scalar division
+    {
+        return Vec2(x / r, y / r);
+    }
+
+    Vec2 operator * (const T &r) const // scalar multiplication
+    {
+        return Vec2(x * r, y * r);
+    }
+
+    Vec2& operator /= (const T &r) // scalar division and assignment
+    {
+        x /= r, y /= r;
+        return *this;
+    }
+
+    Vec2& operator *= (const T &r) // scalar multiplication and assignment
+    {
+        x *= r;
+        y *= r;
+        return *this;
+    }
+
+    friend std::ostream& operator << (std::ostream &s, const Vec2<T> &v) // output
     {
         return s << '[' << v.x << ' ' << v.y << ']';
     }
-    friend Vec2 operator * (const T &r, const Vec2<T> &v)
-    { return Vec2(v.x * r, v.y * r); }
-    T x, y;
+
+    friend Vec2 operator * (const T &r, const Vec2<T> &v) // modified vector multiplication
+    {
+        return Vec2(v.x * r, v.y * r);
+    }
+
+    T x, y; // coordinates
 };
 
-typedef Vec2<float> Vec2f;
-typedef Vec2<int> Vec2i;
+typedef Vec2<float> Vec2f; // floating point vector
+typedef Vec2<int> Vec2i; // integer vector
 
 template<typename T>
-class Vec3
+class Vec3 // 3D vector
 {
 public:
-    Vec3() : x(T(0)), y(T(0)), z(T(0)) {}
-    Vec3(T xx) : x(xx), y(xx), z(xx) {}
-    Vec3(T xx, T yy, T zz) : x(xx), y(yy), z(zz) {}
-    Vec3 operator + (const Vec3 &v) const
-    { return Vec3(x + v.x, y + v.y, z + v.z); }
-    Vec3 operator - (const Vec3 &v) const
-    { return Vec3(x - v.x, y - v.y, z - v.z); }
-    Vec3 operator - () const
-    { return Vec3(-x, -y, -z); }
-    Vec3 operator * (const T &r) const
-    { return Vec3(x * r, y * r, z * r); }
-    Vec3 operator * (const Vec3 &v) const
-    { return Vec3(x * v.x, y * v.y, z * v.z); }
-    T dotProduct(const Vec3<T> &v) const
-    { return x * v.x + y * v.y + z * v.z; }
-    Vec3& operator /= (const T &r)
-    { x /= r, y /= r, z /= r; return *this; }
-    Vec3& operator *= (const T &r)
-    { x *= r, y *= r, z *= r; return *this; }
-    Vec3 crossProduct(const Vec3<T> &v) const
-    { return Vec3<T>(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x); }
-    T norm() const
-    { return x * x + y * y + z * z; }
-    T length() const
-    { return sqrt(norm()); }
+    Vec3() // empty constructor
+    {
+        x = 0;
+        y = 0;
+        z = 0;
+    }
 
-    const T& operator [] (uint8_t i) const { return (&x)[i]; }
-    T& operator [] (uint8_t i) { return (&x)[i]; }
-    Vec3& normalize()
+    Vec3(T xx) //one argument constructor
+    {
+        x = xx;
+        y = xx;
+        z = xx;
+    }
+
+    Vec3(T xx, T yy, T zz) // full constructor
+    {
+        x = xx;
+        y = yy;
+        z = zz;
+    }
+
+    Vec3 operator + (const Vec3 &v) const // vector addition
+    {
+        return Vec3(x + v.x, y + v.y, z + v.z);
+    }
+
+    Vec3 operator - (const Vec3 &v) const // vector subtraction
+    {
+        return Vec3(x - v.x, y - v.y, z - v.z);
+    }
+
+    Vec3 operator - () const // negation
+    {
+         return Vec3(-x, -y, -z);
+    }
+
+    Vec3 operator * (const T &r) const // scalar multiplication
+    {
+        return Vec3(x * r, y * r, z * r);
+    }
+
+    Vec3 operator * (const Vec3 &v) const // modified vector multiplication
+    {
+        return Vec3(x * v.x, y * v.y, z * v.z);
+    }
+
+    T dotProduct(const Vec3<T> &v) const // dot product
+    {
+         return x * v.x + y * v.y + z * v.z;
+    }
+
+    Vec3& operator /= (const T &r) // scalar division and assignment
+    {
+         x /= r, y /= r, z /= r; return *this;
+    }
+
+    Vec3& operator *= (const T &r) //scalar multiplication and assignment
+    {
+         x *= r, y *= r, z *= r; return *this;
+    }
+
+    Vec3 crossProduct(const Vec3<T> &v) const // cross product
+    {
+        return Vec3<T>(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
+    }
+
+    T norm() const // square of magnitude
+    {
+        return x * x + y * y + z * z;
+    }
+
+    T length() const // vector magnitude
+    {
+        return sqrt(norm());
+    }
+
+    const T& operator [] (uint8_t i) const // address coordinates as array
+    {
+        return (&x)[i];
+    }
+
+    T& operator [] (uint8_t i) // address coordinates as array
+    {
+        return (&x)[i];
+    }
+
+    Vec3& normalize() // convert vector to its normal vector
     {
         T n = norm();
         if (n > 0) {
@@ -76,32 +171,40 @@ public:
         return *this;
     }
 
-    friend Vec3 operator * (const T &r, const Vec3 &v)
-    { return Vec3<T>(v.x * r, v.y * r, v.z * r); }
-    friend Vec3 operator / (const T &r, const Vec3 &v)
-    { return Vec3<T>(r / v.x, r / v.y, r / v.z); }
+    friend Vec3 operator * (const T &r, const Vec3 &v) // vector and scalar multiplication
+    {
+        return Vec3<T>(v.x * r, v.y * r, v.z * r);
+    }
 
-    friend std::ostream& operator << (std::ostream &s, const Vec3<T> &v)
+    friend Vec3 operator / (const T &r, const Vec3 &v) // vector and scalar division
+    {
+        return Vec3<T>(r / v.x, r / v.y, r / v.z);
+    }
+
+    friend std::ostream& operator << (std::ostream &s, const Vec3<T> &v) // output
     {
         return s << '[' << v.x << ' ' << v.y << ' ' << v.z << ']';
     }
 
-    T x, y, z;
+    T x, y, z; // coordinates
 };
 
-typedef Vec3<float> Vec3f;
-typedef Vec3<int> Vec3i;
+typedef Vec3<float> Vec3f; // floating point vector
+typedef Vec3<int> Vec3i; // integer vector
 
 template<typename T>
-class Matrix44
+class Matrix44 // 4x4 matrix
 {
 public:
 
-    T x[4][4] = {{1,0,0,0},{0,1,0,0},{0,0,1,0},{0,0,0,1}};
+    T x[4][4] = {{1,0,0,0}, //default is the identity matrix
+                 {0,1,0,0},
+                 {0,0,1,0},
+                 {0,0,0,1}};
 
-    Matrix44() {}
+    Matrix44() {} // empty constructor
 
-    Matrix44 (T a, T b, T c, T d, T e, T f, T g, T h,
+    Matrix44 (T a, T b, T c, T d, T e, T f, T g, T h, // full constructor
               T i, T j, T k, T l, T m, T n, T o, T p)
     {
         x[0][0] = a;
@@ -122,8 +225,15 @@ public:
         x[3][3] = p;
     }
 
-    const T* operator [] (uint8_t i) const { return x[i]; }
-    T* operator [] (uint8_t i) { return x[i]; }
+    const T* operator [] (uint8_t i) const // address locations as array
+    {
+        return x[i];
+    }
+
+    T* operator [] (uint8_t i) // address locations as array
+    {
+        return x[i];
+    }
 
     // Multiply the current matrix with another matrix (rhs)
     Matrix44 operator * (const Matrix44& v) const
@@ -137,14 +247,6 @@ public:
 
     static void multiply(const Matrix44<T> &a, const Matrix44& b, Matrix44 &c)
     {
-#if 0
-        for (uint8_t i = 0; i < 4; ++i) {
-            for (uint8_t j = 0; j < 4; ++j) {
-                c[i][j] = a[i][0] * b[0][j] + a[i][1] * b[1][j] +
-                    a[i][2] * b[2][j] + a[i][3] * b[3][j];
-            }
-        }
-#else
         // A restric qualified pointer (or reference) is basically a promise
         // to the compiler that for the scope of the pointer, the target of the
         // pointer will only be accessed through that pointer (and pointers
@@ -194,22 +296,11 @@ public:
         cp[13] = a0 * bp[1]  + a1 * bp[5]  + a2 * bp[9]  + a3 * bp[13];
         cp[14] = a0 * bp[2]  + a1 * bp[6]  + a2 * bp[10] + a3 * bp[14];
         cp[15] = a0 * bp[3]  + a1 * bp[7]  + a2 * bp[11] + a3 * bp[15];
-#endif
     }
 
     // \brief return a transposed copy of the current matrix as a new matrix
     Matrix44 transposed() const
     {
-#if 0
-        Matrix44 t;
-        for (uint8_t i = 0; i < 4; ++i) {
-            for (uint8_t j = 0; j < 4; ++j) {
-                t[i][j] = x[j][i];
-            }
-        }
-
-        return t;
-#else
         return Matrix44 (x[0][0],
                          x[1][0],
                          x[2][0],
@@ -226,7 +317,6 @@ public:
                          x[1][3],
                          x[2][3],
                          x[3][3]);
-#endif
     }
 
     // \brief transpose itself
@@ -254,7 +344,7 @@ public:
     }
 
 template<typename S>
-    void multVecMatrix(const Vec3<S> &src, Vec3<S> &dst) const
+    void multVecMatrix(const Vec3<S> &src, Vec3<S> &dst) const // multiply point vector and matrix
     {
         S a, b, c, w;
 
@@ -270,7 +360,7 @@ template<typename S>
 
 
     template<typename S>
-    void multDirMatrix(const Vec3<S> &src, Vec3<S> &dst) const
+    void multDirMatrix(const Vec3<S> &src, Vec3<S> &dst) const // multiply direction vector and matrix
     {
         S a, b, c;
 
@@ -283,7 +373,7 @@ template<typename S>
         dst.z = c;
     }
 
-    Matrix44 inverse() const
+    Matrix44 inverse() const // find inverse of the matrix
     {
         int i, j, k;
         Matrix44 s;
@@ -373,7 +463,7 @@ template<typename S>
         return *this;
     }
 
-    friend std::ostream& operator << (std::ostream &s, const Matrix44 &m)
+    friend std::ostream& operator << (std::ostream &s, const Matrix44 &m) // output
     {
         std::ios_base::fmtflags oldFlags = s.flags();
         int width = 12; // total with of the displayed number
@@ -405,22 +495,4 @@ template<typename S>
     }
 };
 
-typedef Matrix44<float> Matrix44f;
-
-
-#if 0
-int main(int argc, char **argv)
-{
-    Vec3f v(0, 1, 2);
-    std::cerr << v << std::endl;
-    Matrix44f a, b, c;
-    c = a * b;
-
-    Matrix44f d(0.707107, 0, -0.707107, 0, -0.331295, 0.883452, -0.331295, 0, 0.624695, 0.468521, 0.624695, 0, 4.000574, 3.00043, 4.000574, 1);
-    std::cerr << d << std::endl;
-    d.invert();
-    std::cerr << d << std::endl;
-
-    return 0;
-}
-#endif
+typedef Matrix44<float> Matrix44f; //floating point matrix
