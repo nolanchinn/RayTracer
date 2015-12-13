@@ -18,7 +18,7 @@ using namespace std;
 //infinity is the largest floating point number
 const float kInfinity = numeric_limits<float>::max();
 
-random_device rd;
+random_device rd; // random number object
 mt19937 gen(rd());
 uniform_real_distribution<> dis(0,1);
 
@@ -33,7 +33,7 @@ inline float deg2rad(const float &deg)
     return deg*M_PI/180;
 }
 
-inline Vec3f mix(const Vec3f &a, const Vec3f& b, const float &mixValue)
+inline Vec3f mix(const Vec3f &a, const Vec3f& b, const float &mixValue) // vector operation
 {
     return a*(1 - mixValue) + b*mixValue;
 }
@@ -189,6 +189,7 @@ Vec3f castRay(const Vec3f &orig, const Vec3f &dir, const vector<unique_ptr<Objec
     return hitColor;
 }
 
+// creates image file from scene data
 void render(const Options &options, const vector<unique_ptr<Object>> &objects)
 {
     Vec3f *framebuffer = new Vec3f[options.width * options.height];
@@ -220,6 +221,7 @@ void render(const Options &options, const vector<unique_ptr<Object>> &objects)
         //save to a PPM file
         ofstream ofs("./out.ppm", ios::out | ios::binary);
         ofs << "P6\n" << options.width << " " << options.height << "\n255\n";
+        // encode the file
         for (uint32_t i = 0; i < options.height*options.width; ++i)
         {
             char r = (char)(255 * clamp(0, 1, framebuffer[i].x));
@@ -238,7 +240,6 @@ int main(int argc, char **argv)
     //make random spheres
     uint32_t numSpheres = 128;
     gen.seed(0);
-    #pragma omp for
     for(uint32_t i = 0; i < numSpheres; ++i)
     {
         Vec3f randPos((0.5 - dis(gen))*10, (0.5 - dis(gen))*10, (0.5 + dis(gen)*10));
@@ -253,7 +254,7 @@ int main(int argc, char **argv)
     options.fov = 60;
     options.cameraToWorld = Matrix44f(0.945519, 0, -0.325569, 0, -0.179534, 0.834209, -0.521403, 0, 0.271593, 0.551447, 0.78876, 0, 4.208271, 8.374532, 17.932925, 1);
 
-    //render the image
+    //render the image (the section with parallelization)
     render(options, objects);
 
     return 0;
