@@ -2,364 +2,385 @@
 #include <cstdio>
 #include <iostream>
 #include <iomanip>
-
-#ifndef M_PI
-#define M_PI           3.14159265358979323846
-#endif
+#include <cmath>
 
 template<typename T>
-class Vec2
+class Vec2 // 2D vector
 {
 public:
-    //coordinates
-    T x, y;
-
-    //empty constructor
-    Vec2()
+    Vec2() // empty constructor
     {
         x = 0;
         y = 0;
     }
 
-    //1 value constructor
-    Vec2(T xx)
+    Vec2(T xx) // one argument constructor
     {
         x = xx;
         y = xx;
     }
 
-    //2 value constructor
-    Vec2(T xx, T yy)
+    Vec2(T xx, T yy) // full constructor
     {
         x = xx;
         y = yy;
     }
 
-    Vec2 operator+(const Vec2 &v) const
+    Vec2 operator + (const Vec2 &v) const // vector addition
     {
         return Vec2(x + v.x, y + v.y);
     }
 
-    Vec2 operator/(const T &r) const
+    Vec2 operator / (const T &r) const // scalar division
     {
-        return Vec2(x/r, y/r);
+        return Vec2(x / r, y / r);
     }
 
-    Vec2 operator*(const T &r) const
+    Vec2 operator * (const T &r) const // scalar multiplication
     {
-        return Vec2(x*r, y*r);
+        return Vec2(x * r, y * r);
     }
 
-    Vec2& operator/=(const T &r)
+    Vec2& operator /= (const T &r) // scalar division and assignment
     {
-        x /= r;
-        y /= r;
-
+        x /= r, y /= r;
         return *this;
     }
 
-    Vec2& operator*=(const T &r)
+    Vec2& operator *= (const T &r) // scalar multiplication and assignment
     {
         x *= r;
         y *= r;
-
         return *this;
     }
 
-    friend std::ostream& operator<<(std::ostream &s, const Vec2<T> &v)
+    friend std::ostream& operator << (std::ostream &s, const Vec2<T> &v) // output
     {
-        return s << '<' << v.x << ', ' << v.y << '>';
+        return s << '[' << v.x << ' ' << v.y << ']';
     }
 
-    friend Vec2 operator *(const T &r, const Vec2<T> &v)
+    friend Vec2 operator * (const T &r, const Vec2<T> &v) // modified vector multiplication
     {
-        return Vec2(v.x*r, v.y*r);
+        return Vec2(v.x * r, v.y * r);
     }
+
+    T x, y; // coordinates
 };
 
-//shorthand
-typedef Vec2<float> Vec2f;
-typedef Vec2<int> Vec2i;
+typedef Vec2<float> Vec2f; // floating point vector
+typedef Vec2<int> Vec2i; // integer vector
 
-//3-Dimensional vector class
 template<typename T>
-class Vec3
+class Vec3 // 3D vector
 {
 public:
-    //The 3D coordinates
-    T x, y, z;
-
-    //Empty constructor
-    Vec3()
+    Vec3() // empty constructor
     {
-        x=0;
-        y=0;
-        z=0;
+        x = 0;
+        y = 0;
+        z = 0;
     }
 
-    //One coordinate constructor
-    Vec3(T xx)
+    Vec3(T xx) //one argument constructor
     {
-        x=xx;
-        y=xx;
-        z=xx;
+        x = xx;
+        y = xx;
+        z = xx;
     }
 
-    //Full constructor
-    Vec3(T xx, T yy, T zz)
+    Vec3(T xx, T yy, T zz) // full constructor
     {
-        x=xx;
-        y=yy;
-        z=zz;
+        x = xx;
+        y = yy;
+        z = zz;
     }
 
-    //Calculate length (magnitude) of the vector
-    T length() const
+    Vec3 operator + (const Vec3 &v) const // vector addition
     {
-        return sqrt(x*x + y*y + z*z);
+        return Vec3(x + v.x, y + v.y, z + v.z);
     }
 
-    //Normalize the vector
-    Vec3<T>& normalize()
+    Vec3 operator - (const Vec3 &v) const // vector subtraction
     {
-        T len = length();
-        if( len>0 )
-        {
-            T invLen = 1/len;
+        return Vec3(x - v.x, y - v.y, z - v.z);
+    }
 
-            x*=invLen;
-            y*=invLen;
-            z*=invLen;
+    Vec3 operator - () const // negation
+    {
+         return Vec3(-x, -y, -z);
+    }
+
+    Vec3 operator * (const T &r) const // scalar multiplication
+    {
+        return Vec3(x * r, y * r, z * r);
+    }
+
+    Vec3 operator * (const Vec3 &v) const // modified vector multiplication
+    {
+        return Vec3(x * v.x, y * v.y, z * v.z);
+    }
+
+    T dotProduct(const Vec3<T> &v) const // dot product
+    {
+         return x * v.x + y * v.y + z * v.z;
+    }
+
+    Vec3& operator /= (const T &r) // scalar division and assignment
+    {
+         x /= r, y /= r, z /= r; return *this;
+    }
+
+    Vec3& operator *= (const T &r) //scalar multiplication and assignment
+    {
+         x *= r, y *= r, z *= r; return *this;
+    }
+
+    Vec3 crossProduct(const Vec3<T> &v) const // cross product
+    {
+        return Vec3<T>(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x);
+    }
+
+    T norm() const // square of magnitude
+    {
+        return x * x + y * y + z * z;
+    }
+
+    T length() const // vector magnitude
+    {
+        return sqrt(norm());
+    }
+
+    const T& operator [] (uint8_t i) const // address coordinates as array
+    {
+        return (&x)[i];
+    }
+
+    T& operator [] (uint8_t i) // address coordinates as array
+    {
+        return (&x)[i];
+    }
+
+    Vec3& normalize() // convert vector to its normal vector
+    {
+        T n = norm();
+        if (n > 0) {
+            T factor = 1 / sqrt(n);
+            x *= factor, y *= factor, z *= factor;
         }
 
         return *this;
     }
 
-    //Dot product of the vector
-    T dot(const Vec3<T> v) const
+    friend Vec3 operator * (const T &r, const Vec3 &v) // vector and scalar multiplication
     {
-        return x*v.x + y*v.y + z*v.z;
+        return Vec3<T>(v.x * r, v.y * r, v.z * r);
     }
 
-    //Cross product of the vector
-    Vec3<T> cross(Vec3<T> v)
+    friend Vec3 operator / (const T &r, const Vec3 &v) // vector and scalar division
     {
-        return Vec3<T>(y*v.z - z*v.y,
-                       z*v.x - x*v.z,
-                       x*v.y - y*v.x);
+        return Vec3<T>(r / v.x, r / v.y, r / v.z);
     }
 
-    //Vector addition
-    Vec3<T> operator+( const Vec3<T> &v ) const
+    friend std::ostream& operator << (std::ostream &s, const Vec3<T> &v) // output
     {
-        return Vec3<T>(x + v.x,
-                       y + v.y,
-                       z + v.z);
+        return s << '[' << v.x << ' ' << v.y << ' ' << v.z << ']';
     }
 
-    //Vector subtraction
-    Vec3<T> operator-( const Vec3<T> &v ) const
-    {
-        return Vec3<T>(x - v.x,
-                       y - v.y,
-                       z - v.z);
-    }
-
-    //Vector negation
-    Vec3 operator-() const
-    {
-        return Vec3(-x,-y,-z);
-    }
-
-    //Scalar multiplication
-    Vec3<T> operator*( const T &r ) const
-    {
-        return Vec3<T>(x*r,
-                       y*r,
-                       z*r);
-    }
-
-    Vec3 operator*(const Vec3 &v) const
-    {
-        return Vec3(x*v.x, y*v.y, z*v.z);
-    }
-    //Access the vector coordinates as an array constant
-    const T& operator[]( uint8_t i ) const
-    {
-        return (&x)[i];
-    }
-
-    //Access the vector coordinates as an array not constant
-    T& operator[]( uint8_t i )
-    {
-        return (&x)[i];
-    }
-
-    //Vector output
-    friend std::ostream& operator<<( std::ostream &os, const Vec3<T> &v )
-    {
-        return os << "<" << v.x << ", " << v.y << ", " << v.z << ">";
-    }
+    T x, y, z; // coordinates
 };
 
-//2 specialized versions, shorthand
-typedef Vec3<float> Vec3f;
-typedef Vec3<int> Vec3i;
+typedef Vec3<float> Vec3f; // floating point vector
+typedef Vec3<int> Vec3i; // integer vector
 
-//4x4 matrix class
 template<typename T>
-class Matrix44
+class Matrix44 // 4x4 matrix
 {
 public:
-    T m[4][4] = {{1,0,0,0}, //the default matrix is the 4x4 identity matrix
+
+    T x[4][4] = {{1,0,0,0}, //default is the identity matrix
                  {0,1,0,0},
                  {0,0,1,0},
                  {0,0,0,1}};
 
-    //empty constructor, does nothing, but won't throw an error
-    Matrix44(){}
+    Matrix44() {} // empty constructor
 
-    //constructor that defines all matrix positions
-    Matrix44( T a, T b, T c, T d, T e, T f, T g, T h, T i, T j, T k, T l, T m, T n, T o, T p)
+    Matrix44 (T a, T b, T c, T d, T e, T f, T g, T h, // full constructor
+              T i, T j, T k, T l, T m, T n, T o, T p)
     {
-        m[0][0] = a;
-        m[0][1] = b;
-        m[0][2] = c;
-        m[0][3] = d;
-        m[1][0] = e;
-        m[1][1] = f;
-        m[1][2] = g;
-        m[1][3] = h;
-        m[2][0] = i;
-        m[2][1] = j;
-        m[2][2] = k;
-        m[2][3] = l;
-        m[3][0] = m;
-        m[3][1] = n;
-        m[3][2] = o;
-        m[3][3] = p;
+        x[0][0] = a;
+        x[0][1] = b;
+        x[0][2] = c;
+        x[0][3] = d;
+        x[1][0] = e;
+        x[1][1] = f;
+        x[1][2] = g;
+        x[1][3] = h;
+        x[2][0] = i;
+        x[2][1] = j;
+        x[2][2] = k;
+        x[2][3] = l;
+        x[3][0] = m;
+        x[3][1] = n;
+        x[3][2] = o;
+        x[3][3] = p;
     }
 
-    //mat[i] instead of mat.m[i] (constant)
-    const T* operator[]( uint8_t i ) const
+    const T* operator [] (uint8_t i) const // address locations as array
     {
-        return m[i];
+        return x[i];
     }
 
-    //mat[i] instead of mat.m[i]
-    T* operator[]( uint8_t i )
+    T* operator [] (uint8_t i) // address locations as array
     {
-        return m[i];
+        return x[i];
     }
 
-    //matrix multiplication
-    Matrix44 operator*( const Matrix44& rhs ) const
+    // Multiply the current matrix with another matrix (rhs)
+    Matrix44 operator * (const Matrix44& v) const
     {
-        Matrix44 mult;
-        for( uint8_t i = 0; i < 4; i++ )
-        {
-            for( uint8_t j = 0; j < 4; j++ )
-            {
-                mult[i][j] = m[i][0] * rhs[0][j] +
-                             m[i][1] * rhs[1][j] +
-                             m[i][2] * rhs[2][j] +
-                             m[i][3] * rhs[3][j];
-            }
-        }
+        Matrix44 tmp;
+        multiply (*this, v, tmp);
 
-        return mult;
+        return tmp;
     }
 
-    //matrix multiplication (c = a*b)
-    static void multiply( const Matrix44<T> &a, const Matrix44& b, Matrix44 &c)
+
+    static void multiply(const Matrix44<T> &a, const Matrix44& b, Matrix44 &c)
     {
-        for( uint8_t i = 0; i < 4; i++ )
-        {
-            for( uint8_t j = 0; j < 4; j++ )
-            {
-                c[i][j] = a[i][0] * b[0][j] +
-                          a[i][1] * b[1][j] +
-                          a[i][2] * b[2][j] +
-                          a[i][3] * b[3][j];
-            }
-        }
+        // A restric qualified pointer (or reference) is basically a promise
+        // to the compiler that for the scope of the pointer, the target of the
+        // pointer will only be accessed through that pointer (and pointers
+        // copied from it.
+        const T * __restrict ap = &a.x[0][0];
+        const T * __restrict bp = &b.x[0][0];
+              T * __restrict cp = &c.x[0][0];
+
+        T a0, a1, a2, a3;
+
+        a0 = ap[0];
+        a1 = ap[1];
+        a2 = ap[2];
+        a3 = ap[3];
+
+        cp[0]  = a0 * bp[0]  + a1 * bp[4]  + a2 * bp[8]  + a3 * bp[12];
+        cp[1]  = a0 * bp[1]  + a1 * bp[5]  + a2 * bp[9]  + a3 * bp[13];
+        cp[2]  = a0 * bp[2]  + a1 * bp[6]  + a2 * bp[10] + a3 * bp[14];
+        cp[3]  = a0 * bp[3]  + a1 * bp[7]  + a2 * bp[11] + a3 * bp[15];
+
+        a0 = ap[4];
+        a1 = ap[5];
+        a2 = ap[6];
+        a3 = ap[7];
+
+        cp[4]  = a0 * bp[0]  + a1 * bp[4]  + a2 * bp[8]  + a3 * bp[12];
+        cp[5]  = a0 * bp[1]  + a1 * bp[5]  + a2 * bp[9]  + a3 * bp[13];
+        cp[6]  = a0 * bp[2]  + a1 * bp[6]  + a2 * bp[10] + a3 * bp[14];
+        cp[7]  = a0 * bp[3]  + a1 * bp[7]  + a2 * bp[11] + a3 * bp[15];
+
+        a0 = ap[8];
+        a1 = ap[9];
+        a2 = ap[10];
+        a3 = ap[11];
+
+        cp[8]  = a0 * bp[0]  + a1 * bp[4]  + a2 * bp[8]  + a3 * bp[12];
+        cp[9]  = a0 * bp[1]  + a1 * bp[5]  + a2 * bp[9]  + a3 * bp[13];
+        cp[10] = a0 * bp[2]  + a1 * bp[6]  + a2 * bp[10] + a3 * bp[14];
+        cp[11] = a0 * bp[3]  + a1 * bp[7]  + a2 * bp[11] + a3 * bp[15];
+
+        a0 = ap[12];
+        a1 = ap[13];
+        a2 = ap[14];
+        a3 = ap[15];
+
+        cp[12] = a0 * bp[0]  + a1 * bp[4]  + a2 * bp[8]  + a3 * bp[12];
+        cp[13] = a0 * bp[1]  + a1 * bp[5]  + a2 * bp[9]  + a3 * bp[13];
+        cp[14] = a0 * bp[2]  + a1 * bp[6]  + a2 * bp[10] + a3 * bp[14];
+        cp[15] = a0 * bp[3]  + a1 * bp[7]  + a2 * bp[11] + a3 * bp[15];
     }
 
-    //transform a point using the matrix
-    template<typename S>
-    void multVecMatrix(const Vec3<S> &src, Vec3<S> &dst) const
-    {
-        S w;
-        dst.x = src.x * m[0][0] + src.y * m[1][0] + src.z * m[2][0] + m[3][0];
-        dst.y = src.x * m[0][1] + src.y * m[1][1] + src.z * m[2][1] + m[3][1];
-        dst.z = src.x * m[0][2] + src.y * m[1][2] + src.z * m[2][2] + m[3][2];
-        w = src.x * m[0][3] + src.y * m[1][3] + src.z * m[2][3] + m[3][3];
-        if (w != 1 && w != 0)
-        {
-            dst.x = dst.x / w;
-            dst.y = dst.y / w;
-            dst.z = dst.z / w;
-        }
-    }
-
-    //transform a vector using the matrix
-    template<typename S>
-    void multDirMatrix(const Vec3<S> &src, Vec3<S> &dst) const
-    {
-        dst.x = src.x * m[0][0] + src.y * m[1][0] + src.z * m[2][0];
-        dst.y = src.x * m[0][1] + src.y * m[1][1] + src.z * m[2][1];
-        dst.z = src.x * m[0][2] + src.y * m[1][2] + src.z * m[2][2];
-    }
-
-    //copy and transpose a the matrix
+    // \brief return a transposed copy of the current matrix as a new matrix
     Matrix44 transposed() const
     {
-        Matrix44 transpMat;
-        for( uint8_t i = 0; i < 4; ++i )
-        {
-            for( uint8_t j = 0; j < 4; ++j )
-            {
-                transpMat[i][j] = m[j][i];
-            }
-        }
-
-        return transpMat;
+        return Matrix44 (x[0][0],
+                         x[1][0],
+                         x[2][0],
+                         x[3][0],
+                         x[0][1],
+                         x[1][1],
+                         x[2][1],
+                         x[3][1],
+                         x[0][2],
+                         x[1][2],
+                         x[2][2],
+                         x[3][2],
+                         x[0][3],
+                         x[1][3],
+                         x[2][3],
+                         x[3][3]);
     }
 
-    //transpose the matrix
-    Matrix44& transpose()
+    // \brief transpose itself
+    Matrix44& transpose ()
     {
-        Matrix44 tmp(m[0][0],
-                     m[1][0],
-                     m[2][0],
-                     m[3][0],
-                     m[0][1],
-                     m[1][1],
-                     m[2][1],
-                     m[3][1],
-                     m[0][2],
-                     m[1][2],
-                     m[2][2],
-                     m[3][2],
-                     m[0][3],
-                     m[1][3],
-                     m[2][3],
-                     m[3][3]);
+        Matrix44 tmp (x[0][0],
+                      x[1][0],
+                      x[2][0],
+                      x[3][0],
+                      x[0][1],
+                      x[1][1],
+                      x[2][1],
+                      x[3][1],
+                      x[0][2],
+                      x[1][2],
+                      x[2][2],
+                      x[3][2],
+                      x[0][3],
+                      x[1][3],
+                      x[2][3],
+                      x[3][3]);
         *this = tmp;
 
         return *this;
     }
 
-    //get the inverse of the matrix (if there is one)
-    Matrix44 inverse()
+template<typename S>
+    void multVecMatrix(const Vec3<S> &src, Vec3<S> &dst) const // multiply point vector and matrix
+    {
+        S a, b, c, w;
+
+        a = src[0] * x[0][0] + src[1] * x[1][0] + src[2] * x[2][0] + x[3][0];
+        b = src[0] * x[0][1] + src[1] * x[1][1] + src[2] * x[2][1] + x[3][1];
+        c = src[0] * x[0][2] + src[1] * x[1][2] + src[2] * x[2][2] + x[3][2];
+        w = src[0] * x[0][3] + src[1] * x[1][3] + src[2] * x[2][3] + x[3][3];
+
+        dst.x = a / w;
+        dst.y = b / w;
+        dst.z = c / w;
+    }
+
+
+    template<typename S>
+    void multDirMatrix(const Vec3<S> &src, Vec3<S> &dst) const // multiply direction vector and matrix
+    {
+        S a, b, c;
+
+        a = src[0] * x[0][0] + src[1] * x[1][0] + src[2] * x[2][0];
+        b = src[0] * x[0][1] + src[1] * x[1][1] + src[2] * x[2][1];
+        c = src[0] * x[0][2] + src[1] * x[1][2] + src[2] * x[2][2];
+
+        dst.x = a;
+        dst.y = b;
+        dst.z = c;
+    }
+
+    Matrix44 inverse() const // find inverse of the matrix
     {
         int i, j, k;
         Matrix44 s;
         Matrix44 t (*this);
 
         // Forward elimination
-        for (i = 0; i < 3 ; i++)
-        {
+        for (i = 0; i < 3 ; i++) {
             int pivot = i;
 
             T pivotsize = t[i][i];
@@ -379,16 +400,13 @@ public:
                         }
                 }
 
-            if (pivotsize == 0)
-            {
+            if (pivotsize == 0) {
                 // Cannot invert singular matrix
                 return Matrix44();
             }
 
-            if (pivot != i)
-            {
-                for (j = 0; j < 4; j++)
-                {
+            if (pivot != i) {
+                for (j = 0; j < 4; j++) {
                     T tmp;
 
                     tmp = t[i][j];
@@ -401,12 +419,10 @@ public:
                 }
             }
 
-            for (j = i + 1; j < 4; j++)
-            {
+            for (j = i + 1; j < 4; j++) {
                 T f = t[j][i] / t[i][i];
 
-                for (k = 0; k < 4; k++)
-                {
+                for (k = 0; k < 4; k++) {
                     t[j][k] -= f * t[i][k];
                     s[j][k] -= f * s[i][k];
                 }
@@ -414,24 +430,20 @@ public:
         }
 
         // Backward substitution
-        for (i = 3; i >= 0; --i)
-        {
+        for (i = 3; i >= 0; --i) {
             T f;
 
-            if ((f = t[i][i]) == 0)
-            {
+            if ((f = t[i][i]) == 0) {
                 // Cannot invert singular matrix
                 return Matrix44();
             }
 
-            for (j = 0; j < 4; j++)
-            {
+            for (j = 0; j < 4; j++) {
                 t[i][j] /= f;
                 s[i][j] /= f;
             }
 
-            for (j = 0; j < i; j++)
-            {
+            for (j = 0; j < i; j++) {
                 f = t[j][i];
 
                 for (k = 0; k < 4; k++) {
@@ -444,45 +456,43 @@ public:
         return s;
     }
 
-    //invert the matrix
+    // \brief set current matrix to its inverse
     const Matrix44<T>& invert()
     {
         *this = inverse();
         return *this;
     }
 
-    //output matrix
-    friend std::ostream& operator << (std::ostream &s, const Matrix44 &x)
+    friend std::ostream& operator << (std::ostream &s, const Matrix44 &m) // output
     {
         std::ios_base::fmtflags oldFlags = s.flags();
         int width = 12; // total with of the displayed number
         s.precision(5); // control the number of displayed decimals
         s.setf (std::ios_base::fixed);
 
-        s << "(" << std::setw (width) << x[0][0] <<
-             " " << std::setw (width) << x[0][1] <<
-             " " << std::setw (width) << x[0][2] <<
-             " " << std::setw (width) << x[0][3] << "\n" <<
+        s << "[" << std::setw (width) << m[0][0] <<
+             " " << std::setw (width) << m[0][1] <<
+             " " << std::setw (width) << m[0][2] <<
+             " " << std::setw (width) << m[0][3] << "\n" <<
 
-             " " << std::setw (width) << x[1][0] <<
-             " " << std::setw (width) << x[1][1] <<
-             " " << std::setw (width) << x[1][2] <<
-             " " << std::setw (width) << x[1][3] << "\n" <<
+             " " << std::setw (width) << m[1][0] <<
+             " " << std::setw (width) << m[1][1] <<
+             " " << std::setw (width) << m[1][2] <<
+             " " << std::setw (width) << m[1][3] << "\n" <<
 
-             " " << std::setw (width) << x[2][0] <<
-             " " << std::setw (width) << x[2][1] <<
-             " " << std::setw (width) << x[2][2] <<
-             " " << std::setw (width) << x[2][3] << "\n" <<
+             " " << std::setw (width) << m[2][0] <<
+             " " << std::setw (width) << m[2][1] <<
+             " " << std::setw (width) << m[2][2] <<
+             " " << std::setw (width) << m[2][3] << "\n" <<
 
-             " " << std::setw (width) << x[3][0] <<
-             " " << std::setw (width) << x[3][1] <<
-             " " << std::setw (width) << x[3][2] <<
-             " " << std::setw (width) << x[3][3] << ")\n";
+             " " << std::setw (width) << m[3][0] <<
+             " " << std::setw (width) << m[3][1] <<
+             " " << std::setw (width) << m[3][2] <<
+             " " << std::setw (width) << m[3][3] << "]";
 
         s.flags (oldFlags);
         return s;
     }
 };
 
-//shortcut for floating point matrix
-typedef Matrix44<float> Matrix44f;
+typedef Matrix44<float> Matrix44f; //floating point matrix

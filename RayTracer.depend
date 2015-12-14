@@ -2,13 +2,24 @@
 1448520448 source:c:\users\nolan\desktop\homework\cptr460\raytracer\geometry.cpp
 	"geometry.h"
 
-1448575851 c:\users\nolan\desktop\homework\cptr460\raytracer\geometry.h
+1449958213 c:\users\nolan\desktop\homework\cptr460\raytracer\geometry.h
 	<cstdlib>
 	<cstdio>
 	<iostream>
 	<iomanip>
+	<cmath>
 
-1448575894 source:c:\users\nolan\desktop\homework\cptr460\raytracer\main.cpp
+1450106581 source:c:\users\nolan\desktop\homework\cptr460\raytracer\main.cpp
+	<cstdio>
+	<cstdlib>
+	<memory>
+	<vector>
+	<utility>
+	<cstdint>
 	<iostream>
+	<fstream>
+	<cmath>
+	<limits>
+	<random>
 	"geometry.h"
 
