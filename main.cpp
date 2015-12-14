@@ -1,3 +1,10 @@
+/* Nolan Chinn
+ * CPTR 460
+ * Prof. Susan Alexander
+ * Final Project
+ * Reference: scratchapixel.com
+ * 14 December 2015
+ */
 #include <cstdio>
 #include <cstdlib>
 #include <memory>
